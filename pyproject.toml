@@ -36,6 +36,13 @@ dependencies = [
     "networkx>=3.3",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "ruff>=0.5",
+    "mypy>=1.10",
+]
+
 [project.scripts]
 oskag = "oskag.cli:app"
 
