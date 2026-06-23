@@ -1,0 +1,39 @@
+# === 敏感信息 ===
+.env
+.env.local
+*.key
+secrets.*
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# === 测试 / 缓存 ===
+.pytest_cache/
+.pytest-tmp/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# === 运行时缓存(可重新生成)===
+cache/
+
+# === 本地工作记录(不进仓库,仅本地保留)===
+dev-logs/
+reports/
+reviews/
+
+# === 编辑器 / 系统 ===
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

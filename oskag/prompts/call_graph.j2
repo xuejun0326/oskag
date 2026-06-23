@@ -1,0 +1,51 @@
+{# call_graph.j2 — 让 LLM 输出 mermaid graph TD
+    输入:
+      repo_name
+      entry_file       boot 入口文件
+      entry_fn         入口函数名
+      entry_line       入口函数行号
+      call_chain       list[str], 入口函数体直接调用的前 N 个 ident
+      handlers         list of {kind, fn_name, file, line}, 可空
+#}
+===SYSTEM===
+你是一名 OS 内核架构图绘制员。下面会给你某仓库的启动入口数据, 请你产出一段
+**mermaid graph TD 代码块**, 把入口 → 调用链 → trap handler 的关系画出来。
+
+输出要求:
+- 只输出一段 mermaid 代码块 (用 ``` 包围, 起始行 ```mermaid), 不要任何额外解释
+- 节点 id 用蛇形命名 (e.g. `main`, `axhal_init`), 节点 label 含 `file:line`
+- 入口节点用 `[[ ... ]]` 矩形, trap handler 用 `{{ "{{ ... }}" }}` 菱形, 普通调用用 `[ ... ]`
+- 节点数 ≤ 20, 每条 edge 都要从已知数据出, 不要虚构调用关系
+- 用 `:::entry`, `:::handler`, `:::call` classDef 着色 (entry=蓝, handler=红, call=灰)
+
+输出示例:
+```mermaid
+graph TD
+    main[["main\nsrc/main.rs:56"]]:::entry --> axhal_init["axhal::init\n(unknown)"]:::call
+    main --> sysno["Sysno match\n(unknown)"]:::call
+    handle_syscall{{"handle_syscall (SYSCALL)\nxapi/src/syscall.rs:12"}}:::handler
+    classDef entry fill:#1976d2,color:#fff;
+    classDef handler fill:#c62828,color:#fff;
+    classDef call fill:#eee,color:#333;
+```
+
+===USER===
+仓库: `{{ repo_name }}`
+
+入口: `{{ entry_fn }}` @ `{{ entry_file }}:{{ entry_line }}`
+
+入口函数体直接调用 (按出现顺序):
+{% for c in call_chain %}
+- {{ c }}
+{% endfor %}
+
+{% if handlers %}
+注册的 trap handler:
+{% for h in handlers %}
+- `{{ h.kind }}` → `{{ h.fn_name }}` @ `{{ h.file }}:{{ h.line }}`
+{% endfor %}
+{% else %}
+(本仓未发现 #[register_trap_handler] 标记)
+{% endif %}
+
+请输出 mermaid 代码块。
