@@ -2,7 +2,7 @@ r"""facts/syscalls.py — 双家族 syscall 抽取 + 6 域分类.
 
 家族路径:
 - ArceOS-Starry: rg `Sysno::(\w+)\s*=>` → name 来自 syscalls crate 的枚举名;
-  id 用 RISCV64_NAME_TO_ID 反查 (赛题主架构 RISC-V 64).
+  id 用 RISCV64_NAME_TO_ID 反查 (主架构 RISC-V 64).
 - rCore-Tutorial: rg `(SYSCALL_\w+)\s*=>` 找 dispatch 站点; 与 `pub const SYSCALL_xxx: usize = N`
   常量声明对齐. 同时与 RISCV64 表交叉校验 (mismatch 写 warnings).
 
